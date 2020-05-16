@@ -197,3 +197,23 @@ hashCode() 的作用是是确定该对象在哈希表中的索引位置。
 对于不想进行序列化的变量，使用 transient 关键字修饰。transient 只能修饰变量，不能修饰类和方法。
 **34** **获取用键盘输入常用的的两种方法**
 方法 1：通过 Scanner方法 2：通过 BufferedReader
+
+----------
+
+Map的实现类
+
+- HashMap
+- Hashtable
+- Properties
+- LinkedHashMap
+- IdentityHashMap
+- TreeMap
+- WeakHashMap
+- ConcurrentHashMap
+
+LinkedHashMap也是一个HashMap,但是内部维持了一个双向链表,可以保持顺序
+
+HashMap 是一个最常用的Map,它根据键的HashCode 值存储数据,根据键可以直接获取它的值，具有很快的访问速度
+
+----
+
