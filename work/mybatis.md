@@ -4,7 +4,7 @@
 2、讲下 MyBatis 的缓存?
 
 答：MyBatis 的缓存分为一级缓存和二级缓存,一级缓存放在 session 里面,默认就有,二级缓存放在它的命名空间里,默认是不打开的
- 
+
 3、Mybatis 是如何进行分页的？分页插件的原理是什么？
 
 答：1）Mybatis 使用 RowBounds 对象进行分页，也可以直接编写 sql 实现分页，也可以使用Mybatis 的分页插件。
@@ -367,21 +367,7 @@ getResult()接口方法。TypeHandler 有两个作用，一是完成从 javaType
 
  
 
-1）直接在方法中传递参数，xml 文件用#{0} #{1}来获取![img](file:///C:\Users\admin\AppData\Local\Temp\ksohtml\wps3E0B.tmp.png)
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
- 
+1）直接在方法中传递参数，xml 文件用#{0} #{1}来获取 
 
  
 
