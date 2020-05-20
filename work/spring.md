@@ -274,23 +274,6 @@ springcloud与dubbo的区别:http rest与rpc
 
 --------
 
-**springcloud的事务一致性**
-
-服务A和服务B必须参与同一个跨应用的全局事务，并保证二者对应的DB事务必须作为该全局事务的分支事务
-
-明确了该全局事务的完成方向后，再将处理分支事务
-
-**XA机制**，将分成prepare、commit两个阶段.事务管理模块在prepare服务A的DB事务、服务B的DB事务都成功后，再逐个commit这些DB事务。DB在prepare返回OK后，如果没有收到请求则会一直保留该分支事务的数据。
-
-**TCC机制**下，事务管理模块是在服务A、服务B执行完毕后即刻提交其参与的DB事务。如果全局事务决定提交，则逐个提交。
-
----
-**事务几种实现方式**
-（1）编程式事务管理对基于 POJO 的应用来说是唯一选择。我们需要在代码中调用beginTransaction()、commit()、rollback()等事务管理相关的方法，这就是编程式事务管理。
-（2）基于 TransactionProxyFactoryBean的声明式事务管理
-（3）基于 @Transactional 的声明式事务管理
-（4）基于Aspectj AOP配置事务
-
 ----
 
 ## 基于JWT Token的身份验证流程
@@ -324,3 +307,125 @@ spring会根据配制文件中配制的切入点去匹配target中方法的调�
 当客户端调用这些方法时，直接调用的是代理对象的方法。
 AOP通过配制文件中配制的切入点与Advice，从而找到指定方法需要增强的功能。
 最终通过代理将Advice动态织入到指定方法。
+
+-----------------------
+
+spring事务的隔离级别
+
+未提交读，已提交读，可重复读，串行化事务
+
+---
+
+spring AOP事务
+
+声明式事务管理建立在AOP之上的。其本质是
+
+对方法前后进行拦截，在目标方法前加入一个事务，在执行完目标方法之后根据执行情况提交或者回滚事务。
+
+基于xml配置文件和基于@Transcational注解
+
+----
+
+### 使用AOP自定义切入实现后端防止表单重复提交
+
+1.自定义防止重复提交标记（@AvoidRepeatableCommit）。
+2.对需要防止重复提交的Congtroller里的方法加上该注解。
+3.新增Aspect切入点，为@AvoidRepeatableCommit加入切入点。
+4每次提交表单时，把key保存到reids（须设置过期时间）。
+5重复提交时，判断当前redis是否有该key，若有则拦截。
+
+----
+
+**自定义starter**
+
+添加一个属性配置类xxProperties，添加一个service服务接口给其他服务调用
+
+添加一个自动配置类XXAutoConfiguration，注册该自动配置类到spring.factories
+
+----
+
+zk和eureka的区别(CAP原理)
+
+**zk保证的是一致性和分区容错性,**
+
+**eureka保证的是可用性和分区容错性.**
+
+----
+
+docker常用命令
+
+```shell
+##查看docker容器版本
+docker version
+##查看docker容器信息
+docker info
+##查看docker容器帮助
+docker --help
+##列出本地images
+docker images
+##搜索仓库MySQL镜像
+docker search mysql
+##下载Redis官方最新镜像，相当于：docker pull redis:latest
+docker pull redis
+##单个镜像删除，相当于：docker rmi redis:latest
+docker rmi redis
+##后台启动容器，参数：-d  已守护方式启动容器
+docker run -d mycentos
+##启动一个或多个已经被停止的容器
+docker start redis
+##查看redis容器日志，默认参数
+docker logs rabbitmq
+##显示最近创建容器
+docker ps -l
+##停止一个运行中的容器
+docker stop redis
+##杀掉一个运行中的容器
+docker kill redis
+##删除一个已停止的容器
+docker rm redis
+```
+
+# Ribbon 和 Feign 的区别
+
+## Ribbon
+
+是一个基于 HTTP 和 TCP **客户端** 的负载均衡的工具。使用 restTemplate 指定 http 请求前缀+具体的请求
+
+## Feign
+
+Feign 是在 Ribbon的基础上进行了一次改进，是一个使用起来更加方便的 HTTP 客户端。
+
+采用接口的方式， **只需要创建一个接口，然后在上面添加注解即可**
+
+@FeignClient(value = "MICROSERVICECLOUD-DEPT")指定服务名称，指定请求地址
+
+----
+
+Nacos整合了注册中心、配置中心功能，可以容器话部署，nacos支持大数量级的集群
+
+------
+
+**springcloud的事务一致性**
+
+服务A和服务B必须参与同一个跨应用的全局事务，并保证二者对应的DB事务必须作为该全局事务的分支事务
+
+明确了该全局事务的完成方向后，再将处理分支事务
+
+**XA机制**，将分成prepare、commit两个阶段.事务管理模块在prepare服务A的DB事务、服务B的DB事务都成功后，再逐个commit这些DB事务。DB在prepare返回OK后，如果没有收到请求则会一直保留该分支事务的数据。
+
+**TCC机制**下，事务管理模块是在服务A、服务B执行完毕后即刻提交其参与的DB事务。如果全局事务决定提交，则逐个提交。
+
+---
+**事务几种实现方式**
+（1）编程式事务管理对基于 POJO 的应用来说是唯一选择。我们需要在代码中调用beginTransaction()、commit()、rollback()等事务管理相关的方法，这就是编程式事务管理。
+（2）基于 TransactionProxyFactoryBean的声明式事务管理
+（3）基于 @Transactional 的声明式事务管理
+（4）基于Aspectj AOP配置事务
+
+
+Seata 是一款开源的分布式事务解决方案，致力于提供高性能和简单易用的分布式事务服务。Seata 将为用户提供了 AT、TCC、SAGA 和 XA 事务模式，为用户打造一站式的分布式解决方案。
+
+**开启一个全局事务,维护全局事务的运行状态,控制分支事务**
+
+使用@GlobalTransactional注解开启分布式事务：
+
